@@ -56,15 +56,15 @@
         [System.String[]]
 		$ComputerName = $env:COMPUTERNAME,
     
-        [Parameter(Position=1)]
+        [Parameter()]
         [Switch]
         $Resolve = $false,
     
-        [Parameter(Position=2)]
+        [Parameter()]
         [Switch]
         $ShowTCPListeners = $false,
     
-        [Parameter(Position=3)]
+        [Parameter()]
         [Switch]
         $ShowUDPListeners = $false
 	)
