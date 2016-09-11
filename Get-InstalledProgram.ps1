@@ -26,7 +26,7 @@
 		System.String,System.String
 
 	.OUTPUTS
-		PSOBject
+		PSCustomObject
 
 	.NOTES
         Created by:   David Christian
