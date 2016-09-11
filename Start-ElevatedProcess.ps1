@@ -1,4 +1,5 @@
-﻿Function Start-ElevatedProcess {
+﻿Function Start-ElevatedProcess
+{
 <#
     .SYNOPSIS
         Runs a process / command as admin.
