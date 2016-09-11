@@ -56,14 +56,15 @@
         https://github.com/dchristian3188 
 #>
 
-    [CmdletBinding(DefaultParameterSetName='Manual')]
-    param(
-        [Parameter(ParameterSetName='Manual',
+    [CmdletBinding(DefaultParameterSetName='Command')]
+    Param
+    (
+        [Parameter(ParameterSetName='Command',
                     Position=0)]
         [System.Management.Automation.ScriptBlock]
         $Scriptblock,
 
-        [Parameter(ParameterSetName='Manual',
+        [Parameter(ParameterSetName='Command',
                     Position=1)]
         [System.String]
         $Application = (Join-Path -Path $PSHOME -ChildPath 'powershell.exe'),
@@ -76,9 +77,15 @@
         $NoExit,
 
         [Parameter(ParameterSetName='Script')]
-        [ValidateScript({If(Test-Path -Path $_ -PathType Leaf){
-                    $true}
-                else{Throw "$_ is not a valid Path"}})]
+        [ValidateScript({
+            If(Test-Path -Path $_ -PathType Leaf)
+            {
+                $true
+            }
+            Else
+            {
+                Throw "$_ is not a valid Path"
+            }})]
         [System.String]
         $Script
     )
