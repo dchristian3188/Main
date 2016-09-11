@@ -1,54 +1,54 @@
 ﻿Function Get-InstalledProgram
 {
 <#
-	.SYNOPSIS
-		Gets the installed programs from add / remove programs.
+    .SYNOPSIS
+        Gets the installed programs from add / remove programs.
 
-	.DESCRIPTION
-		This function queries the registry for installed programs. 
+    .DESCRIPTION
+        This function queries the registry for installed programs. 
 
-	.PARAMETER  DisplayName
-		Optional filter. Name of the program. Supports wild cards.
+    .PARAMETER  DisplayName
+        Optional filter. Name of the program. Supports wild cards.
 
-	.PARAMETER  Publisher
-		Optional filter. Name of the application vendor. Supports wild cards.
-
-	.EXAMPLE
-		Get-InstalledPrograms 
+    .PARAMETER  Publisher
+        Optional filter. Name of the application vendor. Supports wild cards.
 
     .EXAMPLE
-		Get-InstalledPrograms -Publisher VMware* 
-	
+        Get-InstalledPrograms 
+
     .EXAMPLE
-		Get-InstalledPrograms | Out-GridView
+        Get-InstalledPrograms -Publisher VMware* 
+    
+    .EXAMPLE
+        Get-InstalledPrograms | Out-GridView
 
-	.INPUTS
-		System.String,System.String
+    .INPUTS
+        System.String,System.String
 
-	.OUTPUTS
-		PSCustomObject
+    .OUTPUTS
+        PSCustomObject
 
-	.NOTES
+    .NOTES
         Created by:   David Christian
 
-	.LINK
-		https://github.com/dchristian3188
+    .LINK
+        https://github.com/dchristian3188
 #>
     
     [CmdletBinding()]
-	Param
+    Param
     (
-		[Parameter(ValueFromPipelineByPropertyName=$true,
+        [Parameter(ValueFromPipelineByPropertyName=$true,
                     Position=0)]
-	    [Alias('Name')]	
+        [Alias('Name')]    
         [System.String] 
         $DisplayName,
       
         [Parameter(ValueFromPipelineByPropertyName=$true,
                     Position=1)]
         [Alias('Vendor')]
-		[System.String]
-		$Publisher
+        [System.String]
+        $Publisher
     )
     
     #region Filter Prep
@@ -59,13 +59,13 @@
     {
         $whereFilter = '{0} -and ($_.DisplayName -like "{1}")' -f $whereFilter,$DisplayName
         Write-Verbose -Message "Adding display filter: $whereFilter"
-	}
+    }
     
     If($Publisher)
     {
         $whereFilter = '{0} -and ($_.Publisher -like "{1}")' -f $whereFilter,$Publisher
         Write-Verbose -Message "Adding publisher filter: $whereFilter"
-	}
+    }
     
     $whereBlock = [scriptblock]::Create($whereFilter)
     #endregion Filter Prep
@@ -95,18 +95,18 @@
             $regKeyColumn = @{Name='RegistyKey';Expression={$key}}
             Try
             {
-            	Get-ItemProperty -Path $key  -Name *  -ErrorAction 'Stop' | 
+                Get-ItemProperty -Path $key  -Name *  -ErrorAction 'Stop' | 
                     Where-Object $whereBlock | 
                     Select-Object -Property DisplayName,
                                             DisplayVersion,
                                             Publisher,
                                             UninstallString,
                                             $regPath
-    		}
+            }
             Catch
             {
                 Write-Warning -Message $_.Exception.Message
-    		}#end Catch
-    	}
+            }#end Catch
+        }
     }#end foreach key
 }#end Get-InstalledProgram
