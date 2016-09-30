@@ -17,8 +17,8 @@
     )
 
     $numberOfCoins = $Coins.Count
-    $table = New-Object -TypeName "Int32[]" -ArgumentList $($Amount+1)
-    $results = New-Object -TypeName "HashTable[]" -ArgumentList $($Amount+1)
+    $table = New-Object -TypeName Int32[] -ArgumentList $($Amount+1)
+    $results = New-Object -TypeName HashTable[] -ArgumentList $($Amount+1)
     
     #if 0 Amount is passed
     $table[0] = 0
@@ -27,40 +27,40 @@
     #set all results as invalid. 
     #Can't check if soultion is more efficient if value is 0
     #see test/var $newValueFewerCoins
-    For($i = 1; $i -le $Amount; $i++)
+    For($currentAmount = 1; $currentAmount -le $Amount; $currentAmount++)
     {
-        $table[$i] = [int32]::MaxValue
+        $table[$currentAmount] = [int32]::MaxValue
     }
 
-    #check all amounts from 1 to amount
-    For($i = 1; $i -le $Amount; $i++)
+    For($currentAmount = 1; $currentAmount -le $Amount; $currentAmount++)
     {
-        #loop thru each coin smaller than i
-        For($j = 0; $j -lt $numberOfCoins; $j++)
+        #loop thru each coin smaller than current amount
+        For($coinIndex = 0; $coinIndex -lt $numberOfCoins; $coinIndex++)
         {
-            $currentCoin = $Coins[$j]
+            $currentCoin = $Coins[$coinIndex]
             $keyName = "C-{0}" -f $currentCoin
 
-            If($currentCoin -le $i)
+            If($currentCoin -le $currentAmount)
             {
                 #store results of previous subproblem
-                $subResult = $table[$i-$currentCoin]
-                $subHash = $results[$i - $currentCoin]
+                $previousSubProblem = $currentAmount-$currentCoin
+                $subResult = $table[$previousSubProblem]
+                $subHash = $results[$previousSubProblem]
 
-                $validSubResult = $subResult -ne [int32]::MaxValue
-                $newValueFewerCoins =  ($subResult + 1) -lt $table[$i]
-                If($validSubResult -and $newValueFewerCoins)
+                #if new value is samller. Take that result and add one coin
+                $newValueFewerCoins =  ($subResult + 1) -lt $table[$currentAmount]
+                If($newValueFewerCoins)
                 {
-                    $table[$i] = $subResult + 1
-                    $results[$i] = $subHash.Clone()
-                    $results[$i][$keyName] = $subHash[$keyName] + 1
+                    $table[$currentAmount] = $subResult + 1
+                    $results[$currentAmount] = $subHash.Clone()
+                    $results[$currentAmount][$keyName] = $subHash[$keyName] + 1
                 }
             }
         }
     }
 
-    #$table[$Amount]
-    [PSCustomObject]$results[$Amount] 
+    [PSCustomObject]$results[$Amount] | 
+        Select-Object @{N='Amount';E={$Amount}},*
 }
 
 Make-Change -Amount 48 -Coins 25,24,5,1
