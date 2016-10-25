@@ -50,86 +50,86 @@ Function New-WinSCPSessionOptions
     [CmdletBinding()]
     Param
     (
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [ValidateSet('Active','Passive')]
         [String]
         $FTPMode,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [ValidateSet('None','Implicit','Explicit')]
         [String]
         $FtpSecure,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Bool]
         $GiveUpSecurityAndAcceptAnySshHostKey,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Bool]
         $GiveUpSecurityAndAcceptAnyTlsHostCertificate,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $Hostname,
         
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $Password,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Int]
         $ProtNumber,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $PrivateKeyPassphrase,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [ValidateSet('SFTP','SCP','FTP','WebDav')]
         [String]
         $Protocol,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [SecureString]
         $SecurePassword,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $SshHostKeyFingerprint,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $SshPrivateKeyPassphrase,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $SshPrivateKeyPath,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [TimeSpan]
         $TimeOut,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Int]
         $TimeoutInMilliseconds,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $TlsClientCertificatePath,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $TlsHostCertificateFingerprint,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $UserName,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $WebdavRoot,
 
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $WebdavSecure
 
