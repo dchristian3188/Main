@@ -89,8 +89,7 @@
     
     $session = New-Object -TypeName WinSCP.SessionOptions
     $sessionProps = $session | 
-        Get-Member | 
-        Where-Object -FilterScript {$PSItem.MemberType -eq 'Property'}
+        Get-Member -MemberType Properties
 
     $parameters = $MyInvocation.MyCommand.Parameters.Keys | 
         Where-Object {$sessionProps.Name -contains $PSItem }
