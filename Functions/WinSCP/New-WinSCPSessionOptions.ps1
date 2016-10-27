@@ -1,53 +1,5 @@
-﻿Add-Type -Path "PATH_TO_DLL"
-
-Function Get-WinSCP
+﻿Function New-WinSCPSessionOptions
 {
-    [CmdletBinding()]
-    Param
-    (
-        [Parameter()]
-        [String]
-        $URL ='https://cdn.winscp.net/files/WinSCP-5.9.2-Automation.zip?secure=N0G_4Zpd4iym8aZOlf_FMg==,1477365938',
-
-        [Parameter()]
-        [String]
-        $Destination = (Get-Location).Path,
-
-        [Parameter()]
-        [Switch]
-        $Force
-    )
-    Process
-    {
-        If($Destination = (Get-Location).Path)
-        {
-            $Destination = Join-Path -Path $Destination -ChildPath "WinSCP"
-        }
-        Write-Verbose -Message "Destination set to $Destination"
-        
-        $zipPath = (New-TemporaryFile).FullName.Replace('.tmp','.zip')
-        Write-Verbose -Message "Saving zip to $zipPath"
-        Invoke-WebRequest -Uri $URL -UseBasicParsing -OutFile $zipPath
-
-        $exPandSplat = @{
-            Path = $zipPath
-            DestinationPath = $Destination
-        }
-
-        If($Force)
-        {
-            $exPandSplat['Force'] = $true
-        }
-
-        Expand-Archive @exPandSplat
-    }
-    End
-    {
-    }
-}
-Function New-WinSCPSessionOptions
-{
-    [CmdletBinding()]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -152,8 +104,5 @@ Function New-WinSCPSessionOptions
         }
     }
 
-    Write-Output $session
-
-    
+    Write-Output -InputObject $session
 }
-New-WinSCPSessionOptions -FTPMode Passive -GiveUpSecurityAndAcceptAnySshHostKey $false -TimeoutInMilliseconds 600 -PrivateKeyPassphrase "boogers"
