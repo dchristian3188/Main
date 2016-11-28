@@ -23,14 +23,14 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $Hostname,
-        
+
         [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $Password,
 
         [Parameter(ValueFromPipelineByPropertyName)]
         [Int]
-        $ProtNumber,
+        $PortNumber,
 
         [Parameter(ValueFromPipelineByPropertyName)]
         [String]
@@ -86,17 +86,17 @@
         $WebdavSecure
 
     )
-    
+
     $session = New-Object -TypeName WinSCP.SessionOptions
-    $sessionProps = $session | 
+    $sessionProps = $session |
         Get-Member -MemberType Properties
 
-    $parameters = $MyInvocation.MyCommand.Parameters.Keys | 
+    $parameters = $MyInvocation.MyCommand.Parameters.Keys |
         Where-Object {$sessionProps.Name -contains $PSItem }
-    
+
     $parameters.ForEach{
         $propertyName = $PSItem
-        $propertyValue = Get-Variable -Name $propertyName -ValueOnly 
+        $propertyValue = Get-Variable -Name $propertyName -ValueOnly
         If($propertyValue)
         {
             $session.$propertyName = $propertyValue
