@@ -18,11 +18,19 @@
         
         [Parameter(ValueFromPipelineByPropertyName)]
         [Switch]
-        $RemoveRemoteFile
+        $RemoveRemoteFile,
+        
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [String]
+        $LogPath
     )
     Begin
     {
         $session = New-Object -TypeName WinSCP.Session
+        If(-Not([String]::IsNullOrEmpty($LogPath)))
+        {
+            $session.SessionLogPath = $LogPath
+        }
         Try
         {
             $session.Open($SessionOptions)
