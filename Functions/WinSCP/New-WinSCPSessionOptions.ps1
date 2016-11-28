@@ -30,7 +30,7 @@
 
         [Parameter(ValueFromPipelineByPropertyName)]
         [Int]
-        $ProtNumber,
+        $PortNumber,
 
         [Parameter(ValueFromPipelineByPropertyName)]
         [String]
