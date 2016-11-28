@@ -6,23 +6,31 @@
                     ValueFromPipelineByPropertyName)]
         [String[]]
         $Path,
-        
+
         [Parameter(ValueFromPipelineByPropertyName)]
         [String]
         $Destination,
-        
+
         [Parameter(Mandatory,
                     ValueFromPipelineByPropertyName)]
         [WinSCP.SessionOptions]
         $SessionOptions,
-        
+
         [Parameter(ValueFromPipelineByPropertyName)]
         [Switch]
         $RemoveRemoteFile
+
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [String]
+        $LogPath
     )
     Begin
     {
         $session = New-Object -TypeName WinSCP.Session
+        If (-Not([String]::IsNullOrEmpty($LogPath)))
+        {
+          $session.SessionLogPath = $LogPath
+        }
         Try
         {
             $session.Open($SessionOptions)
@@ -60,12 +68,12 @@
                 {
                     $localDest = $Destination
                 }
-                
+
                 $transfer =  $session.GetFiles($file,$localDest,$RemoveRemoteFile)
                 $transfer
                 If(-not($transfer.IsSuccess))
                 {
-                    Write-Error -Message $transfer.Failures 
+                    Write-Error -Message $transfer.Failures
                 }
             }
             Else
