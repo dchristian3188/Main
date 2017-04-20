@@ -34,7 +34,6 @@
     <file condition='$PLASTER_PARAM_FunctionFolders -contains "Classes"' destination='Classes\' source='' />
     <file condition='$PLASTER_PARAM_FunctionFolders -contains "Binaries"' destination='Binaries\' source='' />
     <file condition='$PLASTER_PARAM_FunctionFolders -contains "Data"' destination='Data\' source='' />
-    <file source='template.psm1' destination='${PLASTER_PARAM_ModuleName}.psm1'/>
     <message condition='$PLASTER_PARAM_Pester -eq "Yes"'>Creating a Tests folder </message>
     <file condition='$PLASTER_PARAM_Pester -eq "Yes"' destination='Tests\' source='' />
     <file condition='$PLASTER_PARAM_Pester -eq "Yes"' destination='Tests\${PLASTER_PARAM_ModuleName}.tests.ps1' source='basicTest.ps1' />
