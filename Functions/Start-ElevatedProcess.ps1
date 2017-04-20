@@ -1,151 +1,149 @@
-﻿Function Start-ElevatedProcess
+Function Start-ElevatedProcess
 {
-<#
+    <#
     .SYNOPSIS
-        Runs a process / command as admin.
-  
+    Runs a process / command as admin.
+
     .DESCRIPTION
-        Runs a process with elevated privileges. Has the ability to open a new 
-        PowerShell window. Can run legacy programs as admin cmd.
-  
-    .PARAMETER  Scriptblock
-        Optional script block to execute. Can be used as an argument for legacy cmd.
-  
-    .PARAMETER  Application
-        Optional application to elevate. Default value = Powershell.exe
-        
+    Runs a process with elevated privileges. Has the ability to open a new 
+    powershell window. Can run legacy programs as admin cmd.
+
+    .PARAMETER  Command
+    Optional script block to execture. Can be argument for legacy cmd.
+
+    .PARAMETER  Program
+    Optional application to elevate. Default value = Powershell.exe
+
     .PARAMETER  Last
-        Option switch. Run previous PowerShell command as admin.
-              
+    Option Switch. Run previous powershell command as admin.
+        
     .PARAMETER  NoExit
-        Option Switch. Leave the elevated PowerShell window open.
-  
+    Option Switch. Leave the eveleated powershell window open.
+
     .PARAMETER  Script
-        Optional path to script file.
-        
+    Opional path to script file.
+
     .EXAMPLE
-        ps c:\> Start-ElevatedProcess
-        
-        Opens a new PowerShell window with administrative privileges.
-          
+    ps c:\> Start-ElevatedProcess
+
+    Opens a new powershell window with administrative privileges.
+
     .EXAMPLE
-        ps c:\> Start-ElevatedProcess -Last -NoExit
-        
-        Runs the last PowerShell command with administrative privileges.
-      
+    ps c:\> Start-ElevatedProcess -Last -NoExit
+
+    Runs the last powershell command with adminsitrative privileges.
+
     .EXAMPLE
-        ps c:\> Start-ElevatedProcess {Get-Process iexplore | Stop-Process}
-        
-        Opens a new PowerShell window with administrative privileges stops 
-        all internet explorer process.
-      
+    ps c:\> Start-ElevatedProcess {ps iexplore | kill}
+
+    Opens a new powershell window with administrative privileges stops 
+    all internet explorer process.
+
     .EXAMPLE
-        ps c:\> Start-ElevatedProcess -Application notepad -Scriptblock {C:\Windows\System32\Drivers\etc\hosts}
-        
-        Opens the host file as admin in notepad.exe.
-  
+    ps c:\> Start-ElevatedProcess -Program notepad -Command {C:\Windows\System32\Drivers\etc\hosts}
+
+    Opens the host file as admin in notepad.exe.
+
     .INPUTS
-        System.Management.Automation.ScriptBlock,System.String
-  
+    System.Management.Automation.ScriptBlock,System.String
+
     .OUTPUTS
-        $null
-  
+    $null
+
     .NOTES
-        Created by:   David Christian 
-  
+    Created by:   David Christian 
+
     .LINK
-        https://github.com/dchristian3188 
+    https://github.com/dchristian3188
+    http://overpoweredshell.com/
+
 #>
 
-    [CmdletBinding(DefaultParameterSetName='Command')]
-    Param
-    (
-        [Parameter(ParameterSetName='Command',
-                    Position=0)]
+    [CmdletBinding(DefaultParameterSetName = 'Manual')]
+    param(
+        [Parameter(ParameterSetName = 'Manual', Position = 0)]
         [System.Management.Automation.ScriptBlock]
-        $Scriptblock,
+        $Command,
 
-        [Parameter(ParameterSetName='Command',
-                    Position=1)]
+        [Parameter(ParameterSetName = 'Manual', Position = 1)]
         [System.String]
-        $Application = (Join-Path -Path $PSHOME -ChildPath 'powershell.exe'),
+        $Program = (Join-Path -Path $PsHome -ChildPath 'powershell.exe'),
 
-        [Parameter(ParameterSetName='History')]
+        [Parameter(ParameterSetName = 'History')]
         [Switch]
         $Last,
 
+        [Parameter(ParameterSetName = 'History')]
+        [Parameter(ParameterSetName = 'Manual')]
+        [Parameter(ParameterSetName = 'Script')]
         [Switch]
         $NoExit,
 
-        [Parameter(ParameterSetName='Script')]
-        [ValidateScript({
-            If(Test-Path -Path $_ -PathType Leaf)
+        [Parameter(ParameterSetName = 'Script')]
+        [ValidateScript( 
             {
-                $true
+                if (Test-Path -Path $_ -PathType Leaf)
+                {
+                    $true
+                }
+                else
+                {
+                    Throw "$_ is not a valid Path"
+                }
             }
-            Else
-            {
-                Throw "$_ is not a valid Path"
-            }})]
+        )]
         [System.String]
         $Script
     )
 
     #Base parameters for the start-process cmdlet
-    $startProcessSplat = @{
-        FilePath = $Application
+    $startArgs = @{
+        FilePath = $Program
         Verb = 'RunAs'
         ErrorAction = 'Stop'
     }
-    
-    $applicationIsPowershell = $Application -match 'powershell.exe$'
-    
 
-    If($Last)
+    if ($last)
     {
-        $lastCommand = Get-History | 
+        $LastCommand = Get-History | 
             Select-Object -ExpandProperty CommandLine -Last 1
-        $processArguments = "-command $lastCommand"
+        $ArgList = "-command $lastCommand"
     }
-    
-    If($Script)
+    elseif ($command -and ($program -match 'powershell.exe$'))
     {
-        $Script = Resolve-Path -Path $Script
-        $processArguments = ('-file "{0}"' -f $Script)
+        $ArgList = "-command $command"
+    }
+    elseif ($script)
+    {
+        $script = Resolve-Path -Path $script
+        $ArgList = "-file $script"
+    }
+    elseif ($Command)
+    {
+        $ArgList = "$command"
     }
 
-    If($Scriptblock -and $applicationIsPowershell )
+    if ($NoExit -and $program -match 'powershell.exe$')
     {
-        $processArguments = "-command $Scriptblock"
+        $ArgList = '-NoExit', $ArgList -join " "
+    }
+
+    if ($ArgList)
+    {
+        Write-Verbose -Message "Final command line: $ArgList"
+        $startArgs.Add('ArgumentList', $ArgList)
     } 
-    ElseIf($Scriptblock)
+
+    try
     {
-        $processArguments = "$Scriptblock"
+        Start-Process @StartArgs 
+    }
+    catch
+    {
+        Write-Warning -Message (
+            "Error starting process. Error Message: {0}" -f $_.Exception.Message)
     }
 
-    If($NoExit -and $applicationIsPowershell)
-    {
-        $processArguments = ' -NoExit {0}' -f $processArguments
-    }
-
-    If($processArguments)
-    {
-        Write-Verbose -Message "Starting: $($Application) as administrator with Arguments: $($processArguments)"
-        $startProcessSplat['ArgumentList'] = $processArguments
-    }
-    Else
-    {
-        Write-Verbose -Message "Starting: $($Application) as administrator"
-    }
-    
-    Try
-    {
-        Start-Process @startProcessSplat
-    }
-    Catch
-    {
-        Write-Warning -Message ("Error starting process. Error Message: {0}" -f $_.Exception.Message)
-    }
 }
 
-Set-Alias -Name Sudo -Value Start-ElevatedProcess
+New-Alias -Name sudo -Value Start-ElevatedProcess
