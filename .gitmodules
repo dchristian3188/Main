@@ -1,0 +1,3 @@
+[submodule "DSC/FileWatcher"]
+	path = DSC/FileWatcher
+	url = https://github.com/dchristian3188/FileWatcher.git
