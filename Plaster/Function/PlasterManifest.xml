@@ -31,5 +31,6 @@
   </parameters>
   <content>
     <templateFile source='functionTemplate.ps1' destination='${PLASTER_PARAM_FunctionName}.ps1'/>
+    <templateFile source='testsTemplate.ps1' destination='${PLASTER_PARAM_FunctionName}.tests.ps1'/>
   </content>
 </plasterManifest>
