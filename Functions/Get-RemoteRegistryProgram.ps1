@@ -56,6 +56,7 @@ function Get-RemoteRegistryProgram
                             if($displayname)
                             {
                                 $installedProgram = @{
+                                    ComputerName = $computer
                                     DisplayName = $displayname
                                     Version = $registry.OpenSubKey($node).OpenSubKey($key).GetValue('DisplayVersion')
                                 }
