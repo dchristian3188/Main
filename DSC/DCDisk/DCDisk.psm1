@@ -15,6 +15,7 @@ class DriveLabel
 
     [DriveLabel]Get()
     {
+        $this.DriveLetter
         $volumeInfo = Get-Volume -DriveLetter $this.DriveLetter
         $this.Label = $volumeInfo.FileSystemLabel
         $this.FileSystemType = $volumeInfo.FileSystem
@@ -23,9 +24,17 @@ class DriveLabel
 
     [bool]Test()
     {
-        $currentLabel = (Get-Volume -DriveLetter $this.DriveLetter).FileSystemLabel
-        Write-Verbose -Message "Current Label is [$currentLabel)]. Expecting [$($this.Label)]"
-        Return $currentLabel -eq $this.Label
+        $labelCorrect = Get-Volume -DriveLetter $this.DriveLetter |
+            Where-Object -FilterScript {$PSItem.FileSystemLabel -eq $this.Label}
+        
+        if($labelCorrect)
+        {
+            return $true
+        }
+        else
+        {
+            return $false
+        }
     }
 
     [void]Set()
