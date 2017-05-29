@@ -30,7 +30,7 @@ Function Get-HiddenDrive
 {
     $HIDDEN_DRIVES_KEY = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\'
     $hiddenDrives = (Get-Item -Path $HIDDEN_DRIVES_KEY).GetValue("NoDrives")
-
+    ls > $NUl
     $letterMap = Get-LetterMap
     foreach ($letter in $letterMap.Keys | Sort-Object)
     {
@@ -39,25 +39,5 @@ Function Get-HiddenDrive
         {
             $letter
         }
-    }
-}
-
-function 
-{
-    [CmdletBinding()]
-    param (
-        
-    )
-    
-    begin
-    {
-    }
-    
-    process
-    {
-    }
-    
-    end
-    {
     }
 }
