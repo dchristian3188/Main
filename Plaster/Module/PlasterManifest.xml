@@ -11,8 +11,9 @@
     <tags />
   </metadata>
   <parameters>
+    <parameter name="ModuleAuthor" type="user-fullname" prompt="Author"/>
     <parameter name="ModuleName" type="text" prompt="Name of your module" />
-    <parameter name="ModuleVersion" type="text" prompt="Version number (0.0.0.1)"  default='0.0.0.1' />
+    <parameter name="ModuleVersion" type="text" prompt="Version number"  default='0.0.0.1' />
     <parameter name="ModuleDesc" type="text" prompt="Brief description on this module" />
     <parameter name="FunctionFolders" type="multichoice" prompt="Please select folders to include" default='0,1,2'>
       <choice label="&amp;Public" help="Adds a public folder to module root" value="Public" />
@@ -27,7 +28,7 @@
     </parameter>
   </parameters>
   <content>
-    <newModuleManifest destination='${PLASTER_PARAM_ModuleName}.psd1' moduleVersion='$PLASTER_PARAM_ModuleVersion' rootModule='${PLASTER_PARAM_ModuleName}.psm1' author='$PLASTER_PARAM_FullName' description='$PLASTER_PARAM_ModuleDesc'/>
+    <newModuleManifest destination='${PLASTER_PARAM_ModuleName}.psd1' moduleVersion='$PLASTER_PARAM_ModuleVersion' rootModule='${PLASTER_PARAM_ModuleName}.psm1' author='$PLASTER_PARAM_ModuleAuthor' description='$PLASTER_PARAM_ModuleDesc'/>
     <file source='template.psm1' destination='${PLASTER_PARAM_ModuleName}.psm1'/>
     <message> Creating you folders for module: $PLASTER_PARAM_ModuleName </message>
     <file condition='$PLASTER_PARAM_FunctionFolders -contains "Public"' destination='Public\' source='' />
