@@ -26,13 +26,13 @@
     }
     else 
     {
-        @"
+        @'
     [CmdletBinding(DefaultParameterSetName='Parameter Set 1', 
                 SupportsShouldProcess=$true, 
                 PositionalBinding=$false,
                 HelpUri = 'http://www.microsoft.com/',
                 ConfirmImpact='Medium')]
-"@
+'@
     }
 %>
     Param
