@@ -7,7 +7,7 @@ Function Get-LetterMap
         $driveValue = [math]::Pow(2, ($currentNumber - 1))
         $letterMap[$letter] = $driveValue
     }
-    Write-Output $letterMap
+    $letterMap
 }
 
 Function Get-HiddenDrive

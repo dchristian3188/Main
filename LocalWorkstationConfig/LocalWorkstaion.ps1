@@ -1,3 +1,5 @@
+Install-Module -Name PowerShellModule, cChoco
+
 configuration LocalWorkstation {
     Import-DscResource -ModuleName cChoco
     Import-DscResource -ModuleName PowerShellModule
@@ -67,6 +69,6 @@ $MyData = @{
 New-Item -ItemType Directory -Path C:\PS -ErrorAction 0
 Set-Location -Path C:\PS
 
-Install-Module -Name PowerShellModule, cChoco
+
 LocalWorkstation -ConfigurationData $MyData
 Start-DscConfiguration -Verbose -Force -Wait -Path .\LocalWorkstation\
