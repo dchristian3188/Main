@@ -1,3 +1,9 @@
+$githubProjectsRoot = 'c:\github'
+Set-Location -Path $githubProjectsRoot
+
+Import-Module -Name posh-git
+
+
 Function Start-ElevatedProcess
 {
     <#
