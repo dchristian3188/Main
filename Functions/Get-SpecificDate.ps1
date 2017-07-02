@@ -21,6 +21,9 @@
         PS C:\> Get-SpecifcDay -Instance Second -Day Tuesday
         Returns a DateTime object representing the second tuesday of the 
         current month
+    .EXAMPLE
+        PS C:\> 1..12 | Get-SpecificDate Second Tuesday
+        Lists all patch Tuesdays for the current year.
     .OUTPUTS
         DateTime
     .Link
@@ -48,6 +51,7 @@
         $Day,
 
         [Parameter(
+            ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
             Position = 2)]
         [ValidateRange(1, 12)]
@@ -56,36 +60,44 @@
 
         [Parameter(
             ValueFromPipelineByPropertyName = $true,
-            Position = 2)]
+            Position = 3)]
         [ValidateNotNullOrEmpty()]
         [int]
         $Year = (Get-Date).Year
     )
-
-    [datetime]$tempDate = "{0}/{1}/{2}" -f $Year, $Month, 1
+    Process
+    {
+        [datetime]$tempDate = "{0}/{1}/{2}" -f $Year, $Month, 1
+        while ($tempDate.DayOfWeek -ne $Day)
+        {
+            $tempDate = $tempDate.AddDays(1) 
+        }
     
-    while ($tempDate.DayOfWeek -ne $Day)
-    {
-        $tempDate = $tempDate.AddDays(1) 
-    }
-    
-    $increment = switch ($Instance)
-    {
-        'First' {0}
-        'Second' {7}
-        'Third' {14}
-        'Fourth' {21}
-        'Fifth' {28}
-    }
+        if ($Instance -eq 'Last')
+        {
 
-    $finalDate = $tempDate.AddDays($increment)
-    if ($finalDate.Month -gt $Month)
-    {
-        $message = ("There is no {0} {1} in {2} ({3})" -f $Instance, $Day, [Globalization.DateTimeFormatInfo]::CurrentInfo.GetMonthName($Month), $Year)
-        throw [IndexOutOfRangeException]::New($message)
-    }
-    Else
-    {
-        $finalDate
+        }
+        else
+        {
+            $increment = switch ($Instance)
+            {
+                'First' {0}
+                'Second' {7}
+                'Third' {14}
+                'Fourth' {21}
+                'Fifth' {28}
+            }
+            $finalDate = $tempDate.AddDays($increment)    
+        }
+    
+        if ($finalDate.Month -gt $Month)
+        {
+            $message = ("There is no {0} {1} in {2} ({3})" -f $Instance, $Day, [Globalization.DateTimeFormatInfo]::CurrentInfo.GetMonthName($Month), $Year)
+            throw [IndexOutOfRangeException]::New($message)
+        }
+        Else
+        {
+            $finalDate
+        }
     }
 }
