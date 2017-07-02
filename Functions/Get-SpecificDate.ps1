@@ -6,10 +6,10 @@
         Finds a specific instance of the day of the week.
     .DESCRIPTION
         This function can be used to find an instance of a day of the week.
-        For example, you can ask for the first monday of the month.
+        For example, you can ask for the first Monday of the month.
     .PARAMETER Instance
         Which week day instance to return for selected month.
-        Valid options are: First, Second, Third, Fourth, Fifth
+        Valid options are: First, Second, Third, Fourth, Fifth, Last
     .PARAMETER Day
         Day of week to return. Options should be DayOfWeek type.
     .PARAMETER Month
@@ -19,7 +19,7 @@
         Whcih year to select. Default value is current year.
     .EXAMPLE
         PS C:\> Get-SpecifcDay -Instance Second -Day Tuesday
-        Returns a DateTime object representing the second tuesday of the 
+        Returns a DateTime object representing the second Tuesday of the 
         current month
     .EXAMPLE
         PS C:\> 1..12 | Get-SpecificDate Second Tuesday
@@ -34,12 +34,11 @@
     [OutputType([DateTime])]
     Param
     (
-        
         [Parameter(
             Mandatory = $true,
             ValueFromPipelineByPropertyName = $true,
             Position = 0)]
-        [ValidateSet("First", "Second", "Third", "Fourth", "Fifth")]
+        [ValidateSet("First", "Second", "Third", "Fourth", "Fifth", "Last")]
         [string]
         $Instance,
 
@@ -75,7 +74,15 @@
     
         if ($Instance -eq 'Last')
         {
-
+            $longMonth = $tempDate.AddDays(28).Month -eq $Month
+            if ($longMonth)
+            {
+                $finalDate = $tempDate.AddDays(28)
+            }
+            else 
+            {
+                $finalDate = $tempDate.AddDays(21)    
+            }
         }
         else
         {
@@ -92,7 +99,8 @@
     
         if ($finalDate.Month -gt $Month)
         {
-            $message = ("There is no {0} {1} in {2} ({3})" -f $Instance, $Day, [Globalization.DateTimeFormatInfo]::CurrentInfo.GetMonthName($Month), $Year)
+            $monthFriendlyName = [Globalization.DateTimeFormatInfo]::CurrentInfo.GetMonthName($Month)
+            $message = ("There is no {0} {1} in {2} ({3})" -f $Instance, $Day, $monthFriendlyName, $Year)
             throw [IndexOutOfRangeException]::New($message)
         }
         Else
