@@ -1,8 +1,6 @@
 [CmdletBinding()]
 param(
-    [Parameter()]
-    [Switch]
-    $Push
+
 )
 
 
@@ -13,9 +11,6 @@ foreach ($repo in $repos)
     Write-Host -ForegroundColor Green -Object "Updating Git Repo: [$($repo.BaseName)]"
     Push-Location -Path $repo.FullName
     & git pull
-    if($Push)
-    {
-        & git push
-    }
+    & git status
     Pop-Location
 }
