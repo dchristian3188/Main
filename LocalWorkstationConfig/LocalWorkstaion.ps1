@@ -1,11 +1,14 @@
-Install-Module -Name PowerShellModule, cChoco
-
 configuration LocalWorkstation {
     Import-DscResource -ModuleName cChoco
     Import-DscResource -ModuleName PowerShellModule
     node ("localhost")
     {
-        
+
+        file Github 
+        {
+            DestinationPath = 'C:\github'
+            Type = "Directory"
+        }   
         foreach($package in $ConfigurationData.NonNodeData.Packages)
         {
             cChocoPackageInstaller $package {
