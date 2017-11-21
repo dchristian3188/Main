@@ -1,8 +1,8 @@
 $handbrakePath = 'C:\Program Files\HandBrake\HandBrakeCLI.exe'
 
 Foreach($file in $files)
-$source = "E:\asdfasdf4"
-$dest = "E:\Oadsfadsfmkv"
+$source = "E:\folder\somepath\filename.wmv"
+$dest = "E:\folder\somepath\filename.mkv"
 
 $procArgs = '-i "{0}" -o "{1}" -Z "Very Fast 576p25" -f av_mkv' -f $source,$dest
 
