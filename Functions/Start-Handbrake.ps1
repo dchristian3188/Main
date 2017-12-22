@@ -43,10 +43,17 @@ Function Start-Handbrake
             
             $source = (Resolve-Path -LiteralPath $file).ProviderPath
             $dest = [IO.Path]::ChangeExtension($source, ".$($OutputFormat)")
-            
-            $procArgs = '-i "{0}" -o "{1}" -Z "{2}" -f av_{3}' -f $source, $dest, $HandbrakePreset, $OutputFormat
-            Write-Verbose -Message "Running Handbrake with paramrs $($procArgs)"
-            Start-Process -FilePath $HandbrakePath -ArgumentList $procArgs -Wait
+            if ($source -eq $dest)
+            {
+                $LASTEXITCODE = 1
+                Write-Warning -Message "Skipping source and destination are same."
+            }
+            else
+            {
+                $procArgs = '-i "{0}" -o "{1}" -Z "{2}" -f av_{3}' -f $source, $dest, $HandbrakePreset, $OutputFormat
+                Write-Verbose -Message "Running Handbrake with paramrs $($procArgs)"
+                Start-Process -FilePath $HandbrakePath -ArgumentList $procArgs -Wait
+            }
             
             [pscustomobject]@{
                 Source       = $source
@@ -55,7 +62,10 @@ Function Start-Handbrake
             }
         }
     }
-    end {}
+    end
+    {
+        $LASTEXITCODE = 0
+    }
 }
 
 
