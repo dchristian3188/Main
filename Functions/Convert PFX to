@@ -1,0 +1,16 @@
+#Startup Ubuntu Docker
+docker run -v C:/pathToCert:/data -it ubuntu 
+
+#Instal open ssl
+apt-get update
+apt-get install openssl
+
+
+#Generate Private Key
+openssl pkcs12 -in pullServer.pfx -nocerts -out key.pem -nodes
+
+#Remove Password
+openssl pkcs12 -in pullServer.pfx -nokeys -out cert.pem
+
+#Generate Cert
+openssl pkcs12 -in pullServer.pfx -nokeys -out cert.pem
