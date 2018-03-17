@@ -1,5 +1,5 @@
 #Startup Ubuntu Docker
-docker run -v C:/pathToCert:/data -it ubuntu 
+docker run -v C:/github/:/data -it ubuntu 
 
 #Instal open ssl
 apt-get update
@@ -10,7 +10,7 @@ apt-get install openssl
 openssl pkcs12 -in pullServer.pfx -nocerts -out key.pem -nodes
 
 #Remove Password
-openssl pkcs12 -in pullServer.pfx -nokeys -out cert.pem
+openssl rsa -in key.pem -out server.key
 
 #Generate Cert
 openssl pkcs12 -in pullServer.pfx -nokeys -out cert.pem
