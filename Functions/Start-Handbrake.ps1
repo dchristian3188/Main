@@ -52,7 +52,74 @@ Function Start-Handbrake
             {
                 $procArgs = '-i "{0}" -o "{1}" -Z "{2}" -f av_{3}' -f $source, $dest, $HandbrakePreset, $OutputFormat
                 Write-Verbose -Message "Running Handbrake with paramrs $($procArgs)"
-                Start-Process -FilePath $HandbrakePath -ArgumentList $procArgs -Wait
+                Start-Process -FilePath $HandbrakePath -ArgumentList $procArgs -Wait -WindowStyle Minimized
+            }
+            
+            [pscustomobject]@{
+                Source       = $source
+                Destination  = $dest
+                LastExitCode = $LASTEXITCODE
+            }
+        }
+    }
+    end
+    {
+        $LASTEXITCODE = 0
+    }
+}
+
+Function Start-FFMpeg
+{
+    [cmdletbinding()]
+    Param(
+        [Parameter(
+            Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName
+        )]
+        [Alias('FullName')]
+        [string[]]
+        $Path,
+
+        [Parameter()]
+        [string]
+        $ffmpegPath = 'C:\Users\bigba_000\Downloads\ffmpeg-20180825-844ff49-win64-static\bin\ffmpeg.exe',
+
+        [Parameter()]
+        [string]
+        $OutputFormat = 'mkv'
+
+    )
+    begin
+    {
+        if (-not  (Test-Path -LiteralPath $ffmpegPath))
+        {
+            Write-Error -Message "Unable to find Handbrake at path [$ffmpegPath]" -ErrorAction Stop
+        }
+    }
+    process
+    {
+        foreach ($file in $Path)
+        {
+            Write-Verbose -Message "Starting on file $file"
+            if (-not(Test-Path -LiteralPath $file))
+            {
+                Write-Warning -Message "Unable to find file at path [$file]"
+                continue  
+            }
+            
+            $source = (Resolve-Path -LiteralPath $file).ProviderPath
+            $dest = [IO.Path]::ChangeExtension($source, ".$($OutputFormat)")
+            if ($source -eq $dest)
+            {
+                $LASTEXITCODE = 1
+                Write-Warning -Message "Skipping source and destination are same."
+            }
+            else
+            {
+                $procArgs = '-y -i "{0}" "{1}"' -f $source, $dest
+                Write-Verbose -Message "Running ffmpeg with paramrs $($procArgs)"
+                Start-Process -FilePath $ffmpegPath -ArgumentList $procArgs -Wait -WindowStyle Minimized
             }
             
             [pscustomobject]@{
@@ -101,7 +168,15 @@ Function Convert-Files
     {
         foreach ($file in $Path)
         {
-            $hb = Start-Handbrake -Path $file -Verbose
+            $LASTEXITCODE = 0
+            $isWindowsMediaFile = ([io.path]::GetExtension($file)).ToLower() -eq '.wmv'
+            if($isWindowsMediaFile)
+            {
+                $hb = Start-FFMpeg -Path $file -Verbose
+            }
+            else {
+                $hb = Start-Handbrake -Path $file -Verbose
+            }
             $hb | FL *
             if ($hb.LastExitCode -ne 0)
             {
@@ -125,7 +200,7 @@ Function Convert-Files
                 Write-Warning -Message "Unable to compare Video lengths... Exiting"
                 continue
             }
-            if ([math]::Abs($timeDifference.TotalSeconds) -gt 4)
+            if ([math]::Abs($timeDifference.TotalSeconds) -gt 30)
             {
                 Write-Warning -Message "Time duration doesnt match. Orginal [$orginalVideoLength] New [$newVideoLength]"
                 continue
@@ -145,6 +220,7 @@ Function Convert-Files
             {
                 Write-Verbose -Message "New File is larger, removing"
                 Remove-Item -Path $hb.Destination
+                Move-Item -Path $hb.Source -Destination "$($hb.Source).mkv"
             }
         }
     }

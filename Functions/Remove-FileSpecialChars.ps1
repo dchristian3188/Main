@@ -25,7 +25,7 @@ function Remove-FileSpecialChars
     )
     begin
     {
-        $specialCharRegex =  '[^a-zA-Z0-9 \\$\.-]'
+        $specialCharRegex =  '[^a-zA-Z0-9 :\\$\.-]'
 
     }
     process
@@ -33,8 +33,12 @@ function Remove-FileSpecialChars
         foreach($fPath in $Path)
         {
 
-            $newName = ($fPath -replace $specialCharRegex,' ') -replace '\s\s+',' '
-            Move-Item -LiteralPath $fPath -Destination $newName -Verbose
+            $newName = ($fPath -replace $specialCharRegex,'') -replace '\s\s+',' '
+            if($newName -ne $fPath)
+            {
+              Move-Item -LiteralPath $fPath -Destination $newName -Verbose -Force
+            }
+            
         }
     }
     end
