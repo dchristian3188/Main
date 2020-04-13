@@ -83,7 +83,7 @@ Function Start-FFMpeg
 
         [Parameter()]
         [string]
-        $ffmpegPath = 'C:\Users\bigba_000\Downloads\ffmpeg-20180825-844ff49-win64-static\bin\ffmpeg.exe',
+        $ffmpegPath = 'C:\Program Files\FFMpeg\ffmpeg.exe',
 
         [Parameter()]
         [string]
@@ -225,4 +225,11 @@ Function Convert-Files
         }
     }
     end {}        
+}
+
+$files = Get-ChildItem -File -Rec | ? extension -notmatch 'mkv' | sort length -desc 
+Foreach($file in $files)
+{
+    Convert-Files -Path $file.FullName -Verbose *>> C:\temp\logger.txt
+    #Start-Sleep -Seconds 300
 }

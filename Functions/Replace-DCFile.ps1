@@ -37,7 +37,8 @@ function Replace-DCFilename
 	{
 		
 		
-		$files = Get-ChildItem -LiteralPath $inputLoc -Recurse
+		$files = Get-ChildItem -LiteralPath $inputLoc -Recurse | 
+			Where-Object {$PSItem.Name -match $OldString}
 		if($files.Length -gt 0)
 		{
 			Write-Host "Lets Rock"
