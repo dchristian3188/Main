@@ -1,0 +1,1 @@
+Invoke-WebRequest https://wttr.in/?A1 | Select -ExpandProperty content 

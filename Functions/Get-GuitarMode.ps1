@@ -1,4 +1,4 @@
-Function Get-GuitarMode {
+Function Get-Mode {
     param(
         [switch]
         $AllNotes
@@ -47,7 +47,3 @@ Function Get-GuitarMode {
     $mode = $modes | Get-Random
     Write-Output -InputObject "$note $mode"
 }
-
-cls
-Get-Mode -AllNotes
-
